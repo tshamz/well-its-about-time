@@ -1,0 +1,14 @@
+{
+  "name": "Well it's about time@",
+  "description": "Took ya long enough...",
+  "website": "www.bvaccel.com",
+  "repository": "https://github.com/bvaccel/its-about-time.git",
+  "success_url": "/oauth",
+  "keywords": [
+      "slack",
+      "botkit",
+      "node",
+      "procrastination",
+      "dibert"
+  ]
+}

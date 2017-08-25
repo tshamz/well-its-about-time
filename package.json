@@ -1,0 +1,32 @@
+{
+  "name": "its-about-time",
+  "version": "1.0.0",
+  "description": "slackbot that warns you when you're running dangerously low on billable hours...",
+  "main": "well-its-about-time.js",
+  "dependencies": {
+    "botkit": "0.0.15",
+    "dotenv": "^4.0.0",
+    "emoji-strip": "^1.0.1",
+    "moment": "^2.18.1",
+    "node-fetch": "^1.7.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bvaccel/its-about-time.git"
+  },
+  "keywords": [
+    "flat-screen",
+    "tvs",
+    "bow-staffs"
+  ],
+  "author": "tshamz",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/bvaccel/its-about-time/issues"
+  },
+  "homepage": "https://github.com/tshamz/its-about-time#readme"
+}
