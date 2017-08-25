@@ -77,13 +77,14 @@ const sendMessages = values => {
 };
 
 const getUserIdMap = getUsers(bot)
+  .then(filterBVAUsers)
   .then(createUserIdMap);
 
 const getPeopleInDanger = getHarvestData()
   .then(identifyPeopleInDanger);
 
 const sendReminders = () => {
-  Promise.all([getUserIdMap, getPeopleInDanger])
+  return Promise.all([getUserIdMap, getPeopleInDanger])
     .then(sendMessages);
 };
 
@@ -96,7 +97,6 @@ controller.hears([/hi/], ['direct_message'], (bot, message) => {
 
 controller.on('rtm_open', bot => {
   console.log('** The RTM api just connected: ' + bot.identity.name);
-  getPeopleInDanger.then(people => console.log(people))
 });
 
 module.exports = {
