@@ -1,1 +1,1 @@
-web: node took-ya-long-enough.js
+web: node app.js
