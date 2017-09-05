@@ -141,11 +141,12 @@ controller.hears([/help/i], ['direct_message'], (bot, message) => {
 controller.hears([/report ([\s\S]+)/i], ['direct_message'], (bot, message) => {
   const departments = ['Development', 'Design', 'Paid Media', 'Affiliate', 'PMO', 'Account Strategy', 'CRO', 'Sales'];
   const department = message.match[1];
+
   if (!whitelist.includes(message.user)) {
     bot.reply(message, 'Sorry, you are not authorized.');
   } else {
     if (!departments.includes(department)) {
-      bot.reply(message, 'You asked for a report on a non-existent department. To see all available departments ask me for "help"')
+      bot.reply(message, 'You asked for a report on a non-existent department. To see all available departments ask me for "help"');
     } else {
       getHarvestData(department)
         .then(harvestData => harvestData.totals)
@@ -158,6 +159,7 @@ controller.hears([/report ([\s\S]+)/i], ['direct_message'], (bot, message) => {
 });
 
 controller.hears([/hours/i], ['direct_message'], (bot, message) => {
+  bot.reply(message, 'Please wait...');
   const userId = message.user;
   Promise.all([getUserIdMap(), getHarvestData('All')])
     .then(values => {
