@@ -130,9 +130,12 @@ controller.hears([/hi/i], ['direct_message'], (bot, message) => {
   bot.reply(message, 'heysup.');
 });
 
-controller.hears([/report/i], ['direct_message'], (bot, message) => {
-  if (whitelist.includes(message.user)) {
-    getHarvestData('Development')
+controller.hears([/report ([\s\S]+)/i], ['direct_message'], (bot, message) => {
+  const departments = ['Development', 'Design', 'Paid Media', 'Affiliate', 'PMO', 'Account Strategy', 'CRO', 'Sales'];
+  const department = message.match[1];
+
+  if (whitelist.includes(message.user) && departments.includes(department)) {
+    getHarvestData(department)
       .then(harvestData => harvestData.totals)
       .then(buildReport)
       .then(report => {
