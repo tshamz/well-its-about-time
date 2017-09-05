@@ -79,7 +79,8 @@ controller.storage.teams.all(function(err, teams) {
 
 // Helper Functions ===============================================
 
-const getUsers = bot => {
+// const getUsers = bot => {
+const getUsers = () => {
   return new Promise((resolve, reject) => {
     bot.api.users.list({}, (err, response) => {
       resolve(response.members);
@@ -120,7 +121,7 @@ const identifyPeopleInDanger = harvestData => {
   return harvestData.totals.filter(person => person.billableHours < getTargetHours());
 };
 
-const sendMessage = (offender, slackId) => {
+const sendMessage = (bot, offender, slackId) => {
   bot.startPrivateConversation({user: slackId.id}, (err, convo) => {
     convo.say(`Hi! Just wanted to let you know that your billable hours were looking kinda low for this week. You've currently tracked ${offender.billableHours} hours and you should be at roughly ${getTargetHours()}. ok, byeeeeeeeeeeeeee.`);
   });
@@ -137,7 +138,7 @@ const sendMessages = values => {
   });
 };
 
-const getUserIdMap = () => {
+const getUserIdMap = bot => {
   return getUsers(bot)
     .then(filterBVAUsers)
     .then(createUserIdMap);
@@ -267,7 +268,7 @@ controller.hears([/report/i], ['direct_message'], (bot, message) => {
 
 controller.hears([/hours/i], ['direct_message'], (bot, message) => {
   const userId = message.user;
-  Promise.all([getUserIdMap(), getHarvestData('All')])
+  Promise.all([getUserIdMap(bot), getHarvestData('All')])
     .then(values => {
       const idMap = values[0];
       const harvestData = values[1];
@@ -277,8 +278,9 @@ controller.hears([/hours/i], ['direct_message'], (bot, message) => {
     });
 });
 
-
-controller.on('rtm_open', bot => {
+let bot;
+controller.on('rtm_open', myBot => {
+  bot = myBot
   console.log('** The RTM api just connected: ' + bot.identity.name);
 });
 
