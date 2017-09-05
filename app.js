@@ -141,22 +141,25 @@ controller.hears([/help/i], ['direct_message'], (bot, message) => {
 controller.hears([/report ([\s\S]+)/i], ['direct_message'], (bot, message) => {
   const departments = ['Development', 'Design', 'Paid Media', 'Affiliate', 'PMO', 'Account Strategy', 'CRO', 'Sales'];
   const department = message.match[1];
-
-  if (whitelist.includes(message.user) && departments.includes(department)) {
-    getHarvestData(department)
-      .then(harvestData => harvestData.totals)
-      .then(buildReport)
-      .then(report => {
-        bot.reply(message, '```' + report + '```');
-      });
+  if (!whitelist.includes(message.user)) {
+    bot.reply(message, 'Sorry, you are not authorized.');
   } else {
-    bot.reply(message, 'Either you\'re not an authorized user or you asked for a report on a non-existent department. To see all available departments, ask me for "help"');
+    if (!departments.includes(department)) {
+      bot.reply(message, 'You asked for a report on a non-existent department. To see all available departments ask me for "help"')
+    } else {
+      getHarvestData(department)
+        .then(harvestData => harvestData.totals)
+        .then(buildReport)
+        .then(report => {
+          bot.reply(message, '```' + report + '```');
+        });
+    }
   }
 });
 
 controller.hears([/hours/i], ['direct_message'], (bot, message) => {
   const userId = message.user;
-  Promise.all([getUserIdMap(), getHarvestData('Development')])
+  Promise.all([getUserIdMap(), getHarvestData('All')])
     .then(values => {
       const idMap = values[0];
       const harvestData = values[1];
