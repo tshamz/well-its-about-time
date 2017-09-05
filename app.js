@@ -17,6 +17,10 @@ const controller = Botkit.slackbot({
   interactive_replies: true
 });
 
+controller.setupWebserver(process.env.PORT, function(err, webserver) {
+  controller.createHomepageEndpoint(controller.webserver);
+});
+
 const bot = controller.spawn({
   token: process.env.BOT_TOKEN
 });
