@@ -18,7 +18,7 @@ const controller = Botkit.slackbot({
   clientId: '2334831841.237697237751',
   clientSecret: 'c926d6a2513bf268e321c094b04c96ec',
   scopes: ['bot'],
-  debug: true
+  debug: false
 });
 
 controller.setupWebserver(process.env.PORT, function(err, webserver) {
@@ -48,6 +48,13 @@ controller.on('create_bot',function(bot, config) {
     bot.startRTM(function(err) {
       if (!err) {
         trackBot(bot);
+      }
+    });
+    bot.startPrivateConversation({user: config.createdBy}, function(err, convo) {
+      if (err) {
+        console.log(err);
+      } else {
+        convo.say('Hi! You created me!');
       }
     });
   }
