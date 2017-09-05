@@ -130,6 +130,10 @@ controller.hears([/hi/i], ['direct_message'], (bot, message) => {
   bot.reply(message, 'heysup.');
 });
 
+controller.hears([/help/i], ['direct_message'], (bot, message) => {
+  bot.reply(message, 'Available Departments:```Development\nDesign\nPaid Media\nAffiliate\nPMO\nAccount Strategy\nCRO\nSales```');
+});
+
 controller.hears([/report ([\s\S]+)/i], ['direct_message'], (bot, message) => {
   const departments = ['Development', 'Design', 'Paid Media', 'Affiliate', 'PMO', 'Account Strategy', 'CRO', 'Sales'];
   const department = message.match[1];
