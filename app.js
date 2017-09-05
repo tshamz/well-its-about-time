@@ -149,6 +149,8 @@ controller.hears([/report ([\s\S]+)/i], ['direct_message'], (bot, message) => {
       .then(report => {
         bot.reply(message, '```' + report + '```');
       });
+  } else {
+    bot.reply(message, 'Either you\'re not an authorized user or you asked for a report on a non-existent department. To see all available departments, ask me for "help"');
   }
 });
 
