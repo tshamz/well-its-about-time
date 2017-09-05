@@ -14,59 +14,16 @@ if (!process.env.BOT_TOKEN) {
 }
 
 const controller = Botkit.slackbot({
-  interactive_replies: true,
-  clientId: '2334831841.237697237751',
-  clientSecret: 'c926d6a2513bf268e321c094b04c96ec',
-  scopes: ['bot'],
-  debug: true
+  interactive_replies: true
 });
 
-controller.setupWebserver(1337, function(err, webserver) {
+const bot = controller.spawn({
+  token: process.env.BOT_TOKEN
+});
+
+bot.startRTM((err, bot, payload) => {
   if (err) {
     throw new Error(err);
-  }
-  controller.createWebhookEndpoints(controller.webserver);
-  controller.createHomepageEndpoint(controller.webserver);
-  controller.createOauthEndpoints(controller.webserver, function(err, req, res) {
-    if (err) {
-      res.status(500).send('ERROR: ' + err);
-    } else {
-      res.send('Great Success!');
-    }
-  });
-});
-
-var _bots = {};
-var trackBot = function(bot) {
-  _bots[bot.config.token] = bot;
-};
-
-controller.on('create_bot',function(bot, config) {
-  if (_bots[bot.config.token]) {
-    // already online! do nothing.
-  } else {
-    bot.startRTM(function(err) {
-      if (!err) {
-        trackBot(bot);
-      }
-    });
-  }
-});
-
-controller.storage.teams.all(function(err, teams) {
-  if (err) {
-    throw new Error(err);
-  }
-  for (var t in teams) {
-    if (teams[t].bot) {
-      controller.spawn(teams[t]).startRTM(function(err, bot) {
-        if (err) {
-          console.log('Error connecting bot to Slack:', err);
-        } else {
-          trackBot(bot);
-        }
-      });
-    }
   }
 });
 
@@ -169,96 +126,24 @@ const buildReport = harvestData => {
 
 // Listeners  ===============================================
 
-controller.on('interactive_message_callback', (bot, message) => {
-
-  if (message.callback_id === 'which_department') {
-    // getHarvestData(message.actions[0])
-    //   .then(harvestData => harvestData.totals)
-    //   .then(buildReport)
-    //   .then(report => {
-    //     bot.replyInteractive(message, '```' + report + '```');
-    //   });
-    console.log('ding');
-  }
-
-});
-
 controller.hears([/hi/i], ['direct_message'], (bot, message) => {
   bot.reply(message, 'heysup.');
 });
 
 controller.hears([/report/i], ['direct_message'], (bot, message) => {
   if (whitelist.includes(message.user)) {
-    bot.reply(message, {
-      replace_original: true,
-      attachments: [{
-        title: 'Which department would you like a report for?',
-        callback_id: 'which_department',
-        attachment_type: 'default',
-        actions: [
-          {
-            "name": "development",
-            "text": "Development",
-            "value": "Development",
-            "type": "button",
-          },
-          {
-            "name": "design",
-            "text": "Design",
-            "value": "Design",
-            "type": "button",
-          },
-          {
-            "name": "paid Media",
-            "text": "Paid Media",
-            "value": "Paid%20Media",
-            "type": "button",
-          },
-          {
-            "name": "affiliate",
-            "text": "Affiliate",
-            "value": "Affiliate",
-            "type": "button",
-          },
-          {
-            "name": "pmo",
-            "text": "PMO",
-            "value": "PMO",
-            "type": "button",
-          },
-          {
-            "name": "account Strategy",
-            "text": "Account Strategy",
-            "value": "Account%20Strategy",
-            "type": "button",
-          },
-          {
-            "name": "cRO",
-            "text": "CRO",
-            "value": "CRO",
-            "type": "button",
-          },
-          {
-            "name": "sales",
-            "text": "Sales",
-            "value": "Sales",
-            "type": "button",
-          },
-          {
-            "name": "all",
-            "text": "All",
-            "value": "All",
-            "type": "button",
-          }
-        ]
-      }]
-    })
+    getHarvestData('Development')
+      .then(harvestData => harvestData.totals)
+      .then(buildReport)
+      .then(report => {
+        bot.reply(message, '```' + report + '```');
+      });
   }
 });
 
 controller.hears([/hours/i], ['direct_message'], (bot, message) => {
   const userId = message.user;
-  Promise.all([getUserIdMap(), getHarvestData('All')])
+  Promise.all([getUserIdMap(), getHarvestData('Development')])
     .then(values => {
       const idMap = values[0];
       const harvestData = values[1];
