@@ -179,12 +179,12 @@ const buildReport = harvestData => {
 controller.on('interactive_message_callback', (bot, message) => {
 
   if (message.callback_id === 'which_department') {
-    // getHarvestData(message.actions[0])
-    //   .then(harvestData => harvestData.totals)
-    //   .then(buildReport)
-    //   .then(report => {
-    //     bot.replyInteractive(message, '```' + report + '```');
-    //   });
+    getHarvestData(message.actions[0])
+      .then(harvestData => harvestData.totals)
+      .then(buildReport)
+      .then(report => {
+        bot.replyInteractive(message, '```' + report + '```');
+      });
     console.log('ding');
   }
 
