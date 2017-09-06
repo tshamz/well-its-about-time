@@ -4,7 +4,7 @@ const Botkit     = require('botkit');
 const fetch      = require('node-fetch');
 const emojiStrip = require('emoji-strip');
 
-const whitelist = ['U03KK5BP8', 'U02RV1ALZ'];
+const whitelist = process.env.WHITELIST.split(',');
 
 
 // Setup ===============================================
