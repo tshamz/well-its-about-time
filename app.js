@@ -159,7 +159,7 @@ controller.hears([/report ([\s\S]+)/i], ['direct_message'], (bot, message) => {
 });
 
 controller.hears([/hours/i], ['direct_message'], (bot, message) => {
-  bot.reply(message, 'Please wait...');
+  bot.reply(message, 'Please wait (it might take a few seconds)...');
   const userId = message.user;
   Promise.all([getUserIdMap(), getHarvestData('All')])
     .then(values => {
