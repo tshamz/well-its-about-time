@@ -1,2 +1,2 @@
-# 🙄 tick tock, tick tock ⏳
+# Well It's About Time...
 A Slackbot to remind you that you're not working hard enough
