@@ -6,6 +6,8 @@ const emojiStrip = require('emoji-strip');
 
 const whitelist = process.env.WHITELIST.split(',');
 
+const teamLeadIds = ['U02RV1ALZ', 'U03KK5BP8'];
+
 
 // Setup ===============================================
 
@@ -55,18 +57,19 @@ const getHarvestData = (department) => {
   return fetch(`http://time-is-a-flat-circle.herokuapp.com/api/report?from=${then}&to=${now}&department=${department}`).then(response => response.json());
 };
 
-const getTargetHours = () => {
+const getTargetHours = (slackId) => {
   const isWeekend = moment().isoWeekday() >= 6;
   const isBeforeBusiness = moment().isBefore(moment().startOf('day').add(9, 'hours'));
   const isAfterBusiness = moment().isAfter(moment().startOf('day').add(18, 'hours'));
+  const multiplier = (teamLeadIds.includes(slackId)) ? 2 : 6;
   if (isWeekend) {
     return 30;
   } else if (isBeforeBusiness) {
-    return (moment().isoWeekday() - 1) * 6;
+    return (moment().isoWeekday() - 1) * multiplier;
   } else if (isAfterBusiness) {
-    return moment().isoWeekday() * 6;
+    return moment().isoWeekday() * multiplier;
   } else {
-    return (((moment().isoWeekday() - 1) + (((moment().hour() - 9) + (moment().minute() / 60)) / 9)) * 6) - 3;
+    return (((moment().isoWeekday() - 1) + (((moment().hour() - 9) + (moment().minute() / 60)) / 9)) * multiplier) - (multiplier/2);
   }
 };
 
@@ -76,7 +79,7 @@ const identifyPeopleInDanger = harvestData => {
 
 const sendMessage = (offender, slackId) => {
   bot.startPrivateConversation({user: slackId.id}, (err, convo) => {
-    convo.say(`Hi! Just wanted to let you know that your billable hours were looking kinda low for this week. You've currently tracked ${offender.billableHours} hours and you should be at roughly ${getTargetHours()}. ok, byeeeeeeeeeeeeee.`);
+    convo.say(`Hi! Just wanted to let you know that your billable hours were looking kinda low for this week. You've currently tracked ${offender.billableHours} hours and you should be at roughly ${getTargetHours(slackId)}. ok, byeeeeeeeeeeeeee.`);
   });
 };
 
